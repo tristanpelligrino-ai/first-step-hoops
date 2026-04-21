@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>First Step Hoops — Start the Game the Right Way</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0F172A;
+    --navy-2: #131c33;
+    --navy-3: #1b2742;
+    --blue: #2563EB;
+    --blue-soft: #3b82f6;
+    --orange: #F97316;
+    --white: #FFFFFF;
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E5E7EB;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-700: #334155;
+    --ink: #0F172A;
+    --maxw: 1280px;
+    --pad-x: clamp(20px, 4vw, 56px);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.55;
+  }
+  img { max-width:100%; display:block; }
+  a { color: inherit; text-decoration: none; }
+
+  .display {
+    font-family: 'Anton', 'Oswald', 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding-left: var(--pad-x);
+    padding-right: var(--pad-x);
+  }
+
+  /* ---------- NAV ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--navy);
+    color: var(--white);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px;
+  }
+  .wordmark {
+    display: inline-flex; align-items: baseline; gap: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--white);
+    text-transform: none;
+  }
+  .wordmark .us { color: var(--blue); }
+  /* case variants driven by data-wm on body */
+  body[data-wm="caps"] .wordmark .first,
+  body[data-wm="caps"] .wordmark .hoops { text-transform: uppercase; letter-spacing: 0.02em; }
+  body[data-wm="title"] .wordmark .first,
+  body[data-wm="title"] .wordmark .hoops { text-transform: capitalize; }
+  body[data-wm="lower"] .wordmark .first,
+  body[data-wm="lower"] .wordmark .hoops,
+  body[data-wm="lower"] .wordmark .step { text-transform: lowercase; }
+
+  .nav-links {
+    display: flex; gap: 28px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.78);
+  }
+  .nav-links a:hover { color: var(--white); }
+  @media (max-width: 760px) { .nav-links { display:none; } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px;
+    padding: 0 20px;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform .15s ease, background .15s ease, color .15s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--orange); color: var(--navy); }
+  .btn-primary:hover { background: #ff8a3a; }
+  .btn-ghost { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.25); }
+  .btn-ghost:hover { border-color: var(--white); }
+  .btn-dark { background: var(--navy); color: var(--white); }
+  .btn-dark:hover { background: var(--navy-3); }
+  .btn .arrow { width: 14px; height: 10px; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    background: var(--navy);
+    color: var(--white);
+    overflow: hidden;
+    min-height: 720px;
+    display: flex; align-items: stretch;
+  }
+  .hero-grid {
+    position: relative; z-index: 2;
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 88px var(--pad-x) 96px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+    align-items: end;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--orange);
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content:""; width: 24px; height: 1px; background: var(--orange);
+  }
+  .hero-title {
+    font-size: clamp(64px, 9vw, 132px);
+    margin: 0 0 28px;
+  }
+  .hero-title .blue { color: var(--blue-soft); }
+  .hero-title .stack { display:block; }
+  .hero-sub {
+    max-width: 520px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.78);
+    margin: 0 0 36px;
+  }
+  .hero-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .hero-meta {
+    align-self: end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    border-top: 1px solid rgba(255,255,255,0.16);
+    padding-top: 28px;
+    margin-top: 80px;
+  }
+  .hero-meta .cell { }
+  .hero-meta .k { color: var(--orange); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin-bottom:6px; }
+  .hero-meta .v { font-family: 'Anton', sans-serif; font-size: 26px; text-transform: uppercase; letter-spacing: 0.02em; }
+
+  /* hero image */
+  .hero-photo {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 60%;
+    z-index: 1;
+  }
+  .hero-photo .photo-block {
+    position: absolute; inset: 0;
+    background: #1a2240;
+  }
+  .hero-photo .photo-block img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    filter: grayscale(1) brightness(0.85) contrast(1.05);
+    mix-blend-mode: luminosity;
+    opacity: 0.75;
+  }
+  .hero-photo .photo-block::after {
+    /* navy tint over the photo */
+    content:""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0.35) 50%, rgba(15,23,42,0.65) 100%);
+    mix-blend-mode: multiply;
+  }
+  .hero-photo .photo-block {
+    background: #0F172A;
+  }
+  .hero-photo .photo-label {
+    position: absolute; top: 24px; right: 28px;
+    color: rgba(255,255,255,0.55);
+  }
+  .hero-photo .fade {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+      var(--navy) 0%,
+      var(--navy) 18%,
+      rgba(15,23,42,0.92) 32%,
+      rgba(15,23,42,0.55) 55%,
+      rgba(15,23,42,0.20) 80%,
+      rgba(15,23,42,0.0) 100%);
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; padding-bottom: 64px; }
+    .hero-photo { width: 100%; opacity: 0.55; }
+    .hero-photo .fade {
+      background: linear-gradient(180deg, rgba(15,23,42,0.4) 0%, rgba(15,23,42,0.95) 80%);
+    }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ---------- TESTIMONIALS (replaces trust bar) ---------- */
+  .testimonials {
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    padding: clamp(64px, 7vw, 96px) 0;
+  }
+  .testimonials-head {
+    display: flex; align-items: end; justify-content: space-between; gap: 40px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .testimonials-head h2 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(36px, 4.5vw, 56px);
+    line-height: 0.95;
+    margin: 0;
+    max-width: 16ch;
+  }
+  .testimonials-head .eyebrow {
+    color: var(--blue);
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .testimonials-head .eyebrow::before {
+    content:""; width: 24px; height: 1px; background: var(--blue);
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--gray-200);
+    border-left: 1px solid var(--gray-200);
+  }
+  .t-card {
+    padding: 36px 28px 32px;
+    border-right: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .t-card .mark {
+    font-family: 'Anton', sans-serif;
+    font-size: 60px; line-height: 0.7;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+  .t-card blockquote {
+    margin: 0 0 24px;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: none;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: 0.005em;
+    color: var(--navy);
+  }
+  .t-card .attrib {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .t-card .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Anton', sans-serif;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0.04em;
+    flex: none;
+  }
+  .t-card .who .name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .t-card .who .role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+  }
+  @media (max-width: 900px) {
+    .testimonials-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- SECTION CHROME ---------- */
+  .section { padding: clamp(72px, 9vw, 128px) 0; }
+  .section-eyebrow {
+    color: var(--blue);
+    margin-bottom: 18px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .section-eyebrow::before {
+    content:""; width: 24px; height: 1px; background: var(--blue);
+  }
+  .section-title {
+    font-size: clamp(44px, 6vw, 84px);
+    margin: 0 0 28px;
+    max-width: 14ch;
+  }
+  .section-intro {
+    max-width: 56ch;
+    color: var(--gray-700);
+    font-size: 17px;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-grid .body p {
+    margin: 0 0 18px;
+    color: var(--gray-700);
+    font-size: 17px;
+  }
+  .about-stats {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    border-top: 1px solid var(--gray-200);
+    padding-top: 28px;
+  }
+  .about-stats .stat .v {
+    font-family: 'Anton', sans-serif;
+    font-size: 44px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .about-stats .stat .l {
+    font-size: 12px; color: var(--gray-500); letter-spacing: 0.04em;
+  }
+  @media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  /* ---------- SKILLS ---------- */
+  .skills {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .skills .section-eyebrow { color: var(--orange); }
+  .skills .section-eyebrow::before { background: var(--orange); }
+  .skills .section-intro { color: rgba(255,255,255,0.72); }
+  .skills-head {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  @media (max-width: 860px) { .skills-head { grid-template-columns: 1fr; gap: 24px; } }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.14);
+    border-left: 1px solid rgba(255,255,255,0.14);
+  }
+  .skill {
+    border-right: 1px solid rgba(255,255,255,0.14);
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    padding: 32px 24px 28px;
+    min-height: 240px;
+    position: relative;
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: background .2s ease;
+  }
+  .skill:hover { background: rgba(255,255,255,0.03); }
+  .skill .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--orange);
+    letter-spacing: 0.14em;
+  }
+  .skill h3 {
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 0.95;
+    margin: 16px 0 10px;
+    letter-spacing: 0.01em;
+  }
+  .skill p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.72);
+    margin: 0;
+    line-height: 1.5;
+  }
+  @media (max-width: 980px) { .skills-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .skills-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- WHY ---------- */
+  .why-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    margin-top: 56px;
+    border-top: 2px solid var(--navy);
+  }
+  .why-card {
+    padding: 40px 28px 36px;
+    border-right: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+  }
+  .why-card:last-child { border-right: none; }
+  .why-card .num {
+    font-family: 'Anton', sans-serif;
+    font-size: 20px;
+    color: var(--orange);
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+  .why-card h3 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 30px;
+    margin: 0 0 12px;
+    line-height: 1;
+    color: var(--navy);
+  }
+  .why-card p {
+    margin: 0;
+    color: var(--gray-700);
+    font-size: 15px;
+  }
+  @media (max-width: 860px) {
+    .why-grid { grid-template-columns: 1fr; }
+    .why-card { border-right: none; }
+  }
+
+  /* ---------- COACH ---------- */
+  .coach {
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .coach-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .coach-photo {
+    position: relative;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    background: #cdd5e3;
+  }
+  .coach-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .coach-photo .photo-label {
+    position: absolute; bottom: 16px; left: 16px;
+    color: var(--navy); opacity: 0.6;
+  }
+  .coach-photo .badge {
+    position: absolute; top: 20px; left: -10px;
+    background: var(--orange); color: var(--navy);
+    padding: 8px 14px;
+    font-family: 'Anton', sans-serif; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .coach-body p {
+    font-size: 17px; color: var(--gray-700);
+    margin: 0 0 18px;
+  }
+  .coach-quote {
+    margin-top: 32px;
+    padding-left: 20px;
+    border-left: 3px solid var(--orange);
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-size: 28px;
+    line-height: 1.05;
+    color: var(--navy);
+    max-width: 18ch;
+  }
+  @media (max-width: 860px) { .coach-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  /* ---------- PROGRAMS ---------- */
+  .programs-head {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px;
+    align-items: end; margin-bottom: 56px;
+  }
+  @media (max-width: 860px) { .programs-head { grid-template-columns: 1fr; } }
+
+  .programs-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  .program {
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    padding: 36px 32px;
+    display: flex; flex-direction: column;
+    position: relative;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .program:hover { border-color: var(--navy); transform: translateY(-2px); }
+  .program.featured {
+    background: var(--navy); color: var(--white); border-color: var(--navy);
+  }
+  .program .ribbon {
+    position: absolute; top: -1px; right: -1px;
+    background: var(--orange); color: var(--navy);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 6px 12px;
+  }
+  .program .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 18px;
+  }
+  .program.featured .name { color: rgba(255,255,255,0.6); }
+  .program .price {
+    font-family: 'Anton', sans-serif;
+    font-size: 88px; line-height: 0.9;
+    margin: 0 0 6px;
+  }
+  .program .price .currency {
+    font-size: 32px; vertical-align: top;
+    margin-right: 4px;
+    opacity: 0.7;
+  }
+  .program .unit {
+    font-size: 13px; color: var(--gray-500); margin-bottom: 24px;
+  }
+  .program.featured .unit { color: rgba(255,255,255,0.65); }
+  .program h3 {
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 30px;
+    margin: 8px 0 12px;
+    line-height: 1;
+  }
+  .program p { color: var(--gray-700); font-size: 15px; margin: 0 0 24px; }
+  .program.featured p { color: rgba(255,255,255,0.78); }
+  .program ul {
+    list-style: none; padding: 0; margin: 0 0 28px;
+    border-top: 1px solid var(--gray-200);
+  }
+  .program.featured ul { border-color: rgba(255,255,255,0.14); }
+  .program li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .program.featured li { border-color: rgba(255,255,255,0.14); }
+  .program li::before {
+    content:""; width: 8px; height: 8px; background: var(--orange);
+    flex: none;
+  }
+  .program .cta-row { margin-top: auto; }
+
+  @media (max-width: 760px) {
+    .programs-grid { grid-template-columns: 1fr; }
+    .program .price { font-size: 64px; }
+  }
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta {
+    background: var(--navy);
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .final-cta-inner {
+    padding: clamp(80px, 10vw, 160px) 0;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 60px;
+    align-items: end;
+    position: relative;
+    z-index: 2;
+  }
+  .final-cta h2 {
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: clamp(56px, 9vw, 128px);
+    line-height: 0.92;
+    margin: 0 0 24px;
+  }
+  .final-cta h2 .blue { color: var(--blue-soft); }
+  .final-cta p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.78);
+    max-width: 36ch;
+    margin: 0 0 32px;
+  }
+  .final-cta .micro {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 28px;
+  }
+  .final-cta .micro span { display: inline-flex; align-items: center; gap: 8px; }
+  .final-cta .micro span::before {
+    content:""; width: 6px; height: 6px; background: var(--orange);
+  }
+  .final-bg {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 16px, rgba(255,255,255,0) 16px 32px);
+    z-index: 1;
+    pointer-events: none;
+  }
+  @media (max-width: 860px) { .final-cta-inner { grid-template-columns: 1fr; } }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    background: #060a17;
+    color: rgba(255,255,255,0.6);
+    padding: 40px 0 32px;
+    font-size: 13px;
+  }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 20px;
+  }
+  footer .wordmark { font-size: 18px; }
+
+  /* ---------- TWEAKS PANEL ---------- */
+  #tweaks {
+    position: fixed; right: 20px; bottom: 20px; z-index: 100;
+    width: 280px;
+    background: var(--white);
+    border: 1px solid var(--navy);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    padding: 18px;
+    display: none;
+    font-family: 'Inter', sans-serif;
+  }
+  #tweaks.on { display: block; }
+  #tweaks h4 {
+    margin: 0 0 14px;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #tweaks h4::after {
+    content:""; flex:1; height:1px; background: var(--gray-200); margin-left: 12px;
+  }
+  #tweaks .tweak { margin-bottom: 14px; }
+  #tweaks label {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-500); display: block; margin-bottom: 6px;
+  }
+  #tweaks .opts { display: flex; gap: 6px; flex-wrap: wrap; }
+  #tweaks .opt {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    border-radius: 0;
+    color: var(--navy);
+    min-width: 70px;
+  }
+  #tweaks .opt.on {
+    background: var(--navy); color: var(--white); border-color: var(--navy);
+  }
+
+  /* ---------- HERO VARIANT B (split) ---------- */
+  body[data-hero="b"] .hero-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding-top: 64px; padding-bottom: 64px;
+  }
+  body[data-hero="b"] .hero-photo {
+    position: relative;
+    width: auto;
+    height: 540px;
+    align-self: stretch;
+    margin-top: 0;
+    grid-column: 2;
+  }
+  body[data-hero="b"] .hero-photo .fade { display:none; }
+  body[data-hero="b"] .hero-meta { grid-column: 1; }
+  /* this variant uses normal grid flow, undo absolute */
+  body[data-hero="b"] .hero { min-height: auto; }
+  body[data-hero="b"] .hero-grid > .hero-content { grid-column: 1; }
+  body[data-hero="b"] .hero-photo {
+    position: relative !important;
+    inset: auto;
+  }
+
+  /* ---------- HERO VARIANT C (type-driven) ---------- */
+  body[data-hero="c"] .hero-photo { display: none; }
+  body[data-hero="c"] .hero-grid {
+    grid-template-columns: 1fr;
+    padding-top: 100px; padding-bottom: 100px;
+  }
+  body[data-hero="c"] .hero-title {
+    font-size: clamp(80px, 14vw, 220px);
+    line-height: 0.88;
+  }
+  body[data-hero="c"] .hero-bg-mark {
+    position: absolute; right: -2%; bottom: -10%;
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-size: clamp(200px, 32vw, 520px);
+    line-height: 0.8;
+    color: rgba(37,99,235,0.07);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  body:not([data-hero="c"]) .hero-bg-mark { display:none; }
+
+  /* dark accent toggle */
+  body[data-accent="bold"] .btn-primary { background: var(--orange); }
+  body[data-accent="blue"] .btn-primary { background: var(--blue); color: var(--white); }
+  body[data-accent="blue"] .btn-primary:hover { background: var(--blue-soft); }
+  body[data-accent="blue"] .hero-eyebrow { color: var(--blue-soft); }
+  body[data-accent="blue"] .hero-eyebrow::before { background: var(--blue-soft); }
+  body[data-accent="blue"] .hero-meta .k { color: var(--blue-soft); }
+  body[data-accent="blue"] .skill .num { color: var(--blue-soft); }
+  body[data-accent="blue"] .skills .section-eyebrow { color: var(--blue-soft); }
+  body[data-accent="blue"] .skills .section-eyebrow::before { background: var(--blue-soft); }
+  body[data-accent="blue"] .why-card .num { color: var(--blue); }
+  body[data-accent="blue"] .why-card h3 { }
+  body[data-accent="blue"] .program .ribbon { background: var(--blue); color: var(--white); }
+  body[data-accent="blue"] .program li::before { background: var(--blue); }
+  body[data-accent="blue"] .final-cta .micro span::before { background: var(--blue-soft); }
+  body[data-accent="blue"] .trust-cell .num { color: var(--blue); }
+  body[data-accent="blue"] .wordmark .stamp { background: var(--blue); }
+  body[data-accent="blue"] .coach-photo .badge { background: var(--blue); color: var(--white); }
+  body[data-accent="blue"] .coach-quote { border-left-color: var(--blue); }
+
+</style>
+<template id="__bundler_thumbnail" data-bg-color="#0F172A">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0F172A"/>
+    <!-- basketball glyph -->
+    <g transform="translate(600 400)">
+      <circle r="160" fill="#F97316"/>
+      <path d="M-160 0 H160 M0 -160 V160 M-113 -113 Q0 0 113 113 M113 -113 Q0 0 -113 113" stroke="#0F172A" stroke-width="10" fill="none" stroke-linecap="round"/>
+    </g>
+    <!-- staggered FSH -->
+    <g fill="#FFFFFF" font-family="Anton, Impact, sans-serif" font-size="120" letter-spacing="8">
+      <text x="380" y="660">F</text>
+      <text x="470" y="680">S</text>
+      <text x="565" y="700">H</text>
+    </g>
+  </svg>
+</template>
+</head>
+<body data-hero="a" data-accent="blue" data-wm="lower">
+
+<!-- ============== NAV ============== -->
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="wordmark" href="#">
+      <span class="first">first</span><span class="us">_</span><span class="step">step</span>&nbsp;<span class="hoops">hoops</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#coach">Coach</a>
+      <a href="#programs">Programs</a>
+    </nav>
+    <a class="btn btn-primary" href="/book.html">Book a Session
+      <svg class="arrow" viewBox="0 0 14 10" fill="none"><path d="M1 5h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-photo" aria-hidden="true">
+    <div class="photo-block"><img src="assets/tristan-hoop.jpg" alt="" /></div>
+    <div class="fade"></div>
+  </div>
+  <div class="hero-bg-mark" aria-hidden="true">FSH</div>
+
+  <div class="hero-grid">
+    <div class="hero-content">
+      <div class="hero-eyebrow mono">Youth Basketball Training · Grades 3–5</div>
+      <h1 class="display hero-title">
+        <span class="stack">Start the</span>
+        <span class="stack">Game the</span>
+        <span class="stack"><span class="blue">Right</span> Way.</span>
+      </h1>
+      <p class="hero-sub">We help young players build confidence and learn the fundamentals of basketball in a structured, encouraging environment.</p>
+      <div class="hero-cta-row">
+        <a class="btn btn-primary" href="/book.html">Book a Session
+          <svg class="arrow" viewBox="0 0 14 10" fill="none"><path d="M1 5h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#programs">View Programs</a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="cell"><div class="k mono">Ages</div><div class="v">3rd – 5th</div></div>
+      <div class="cell"><div class="k mono">Sessions</div><div class="v">From $25</div></div>
+      <div class="cell"><div class="k mono">Skill Level</div><div class="v">All Welcome</div></div>
+      <div class="cell"><div class="k mono">Focus</div><div class="v">Fundamentals</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TESTIMONIALS ============== -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="testimonials-head">
+      <div>
+        <div class="eyebrow mono">What Coaches Say</div>
+        <h2>Trusted by the<br/>coaches who know him.</h2>
+      </div>
+    </div>
+    <div class="testimonials-grid">
+      <article class="t-card">
+        <div class="mark">&ldquo;</div>
+        <blockquote>[Quote from high school coach #1 — two sentences on Tristan's work ethic and how he relates to younger players.]</blockquote>
+        <div class="attrib">
+          <div class="avatar">HC</div>
+          <div class="who">
+            <div class="name">[Coach Name]</div>
+            <div class="role mono">High School Coach &middot; [School]</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="t-card">
+        <div class="mark">&ldquo;</div>
+        <blockquote>[Quote from high school coach #2 — emphasis on fundamentals and character.]</blockquote>
+        <div class="attrib">
+          <div class="avatar">HC</div>
+          <div class="who">
+            <div class="name">[Coach Name]</div>
+            <div class="role mono">High School Coach &middot; [School]</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="t-card">
+        <div class="mark">&ldquo;</div>
+        <blockquote>[Quote from camp coach — how Tristan coached younger kids during summer camp.]</blockquote>
+        <div class="attrib">
+          <div class="avatar">CC</div>
+          <div class="who">
+            <div class="name">[Coach Name]</div>
+            <div class="role mono">Camp Coach &middot; [Camp Name]</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== ABOUT ============== -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-eyebrow mono">About the Program</div>
+        <h2 class="display section-title">A Strong Foundation Changes Everything.</h2>
+      </div>
+      <div class="body">
+        <p>At First Step Hoops, we focus on what matters most early on—learning the game the right way.</p>
+        <p>Our sessions are designed to help young players understand how basketball actually works, while building the skills they need to feel confident on the court.</p>
+        <p>We don't rush development. We don't create pressure. We create an environment where kids can learn, improve, and enjoy the game.</p>
+
+        <div class="about-stats">
+          <div class="stat"><div class="v">5</div><div class="l mono">Core skills</div></div>
+          <div class="stat"><div class="v">3–5</div><div class="l mono">Grade range</div></div>
+          <div class="stat"><div class="v">0</div><div class="l mono">Pressure</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SKILLS ============== -->
+<section class="section skills" id="skills">
+  <div class="container">
+    <div class="skills-head">
+      <div>
+        <div class="section-eyebrow mono">What Your Child Will Learn</div>
+        <h2 class="display section-title">Core Skills Every Player Needs.</h2>
+      </div>
+      <p class="section-intro">We break the game down into simple, teachable fundamentals that players can build on over time.</p>
+    </div>
+
+    <div class="skills-grid">
+      <article class="skill">
+        <div class="num">01 / FOOTWORK</div>
+        <div>
+          <h3>Foot­work</h3>
+          <p>Learn how to move with balance and control.</p>
+        </div>
+      </article>
+      <article class="skill">
+        <div class="num">02 / SHOOTING</div>
+        <div>
+          <h3>Shooting</h3>
+          <p>Develop proper form and consistency.</p>
+        </div>
+      </article>
+      <article class="skill">
+        <div class="num">03 / PASSING</div>
+        <div>
+          <h3>Passing</h3>
+          <p>Understand timing, spacing, and decision-making.</p>
+        </div>
+      </article>
+      <article class="skill">
+        <div class="num">04 / DRIBBLING</div>
+        <div>
+          <h3>Drib­bling</h3>
+          <p>Build confidence handling the ball under control.</p>
+        </div>
+      </article>
+      <article class="skill">
+        <div class="num">05 / FINISHING</div>
+        <div>
+          <h3>Finishing</h3>
+          <p>Score around the basket with technique and touch.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== WHY ============== -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-eyebrow mono">Why Parents Choose First Step Hoops</div>
+    <h2 class="display section-title">Built for Early Development.</h2>
+
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="num">01</div>
+        <h3>Structured Coaching</h3>
+        <p>Every session is intentional and focused—built around clear progressions kids can actually follow.</p>
+      </div>
+      <div class="why-card">
+        <div class="num">02</div>
+        <h3>Positive Environment</h3>
+        <p>Encouraging instruction that builds confidence, never pressure or comparison.</p>
+      </div>
+      <div class="why-card">
+        <div class="num">03</div>
+        <h3>No Pressure, Just Progress</h3>
+        <p>Development over rankings or outcomes. We measure growth, not stats.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== COACH ============== -->
+<section class="section coach" id="coach">
+  <div class="container">
+    <div class="coach-grid">
+      <div class="coach-photo">
+        <img src="assets/tristan-shot.jpg" alt="Coach Tristan in shooting form" />
+        <div class="badge">Head Coach</div>
+      </div>
+      <div class="coach-body">
+        <div class="section-eyebrow mono">About the Coach</div>
+        <h2 class="display section-title">Meet Tristan.</h2>
+        <p>Tristan is passionate about helping young players build a strong foundation in basketball.</p>
+        <p>His approach focuses on teaching the fundamentals the right way, while creating a positive and encouraging environment where kids feel comfortable learning and improving.</p>
+        <p>He believes that confidence comes from understanding the game—and that early development should be both structured and enjoyable.</p>
+        <div class="coach-quote">"Confidence comes from understanding the game."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PROGRAMS ============== -->
+<section class="section" id="programs">
+  <div class="container">
+    <div class="programs-head">
+      <div>
+        <div class="section-eyebrow mono">Programs / Sessions</div>
+        <h2 class="display section-title">Training Options.</h2>
+      </div>
+      <p class="section-intro">Two simple ways to get started. Pay online, pick a time that works, and show up ready to learn.</p>
+    </div>
+
+    <div class="programs-grid">
+      <article class="program">
+        <div class="name">Single Session</div>
+        <div class="price"><span class="currency">$</span>25</div>
+        <div class="unit mono">per session · 1 hour</div>
+        <p>A focused training session designed to introduce and reinforce core fundamentals.</p>
+        <ul>
+          <li>One 60-minute session</li>
+          <li>Skill assessment included</li>
+          <li>Take-home practice plan</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-dark" href="/book.html?plan=single">View Availability
+            <svg class="arrow" viewBox="0 0 14 10" fill="none"><path d="M1 5h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="program featured">
+        <div class="ribbon">Best Value</div>
+        <div class="name">4-Pack</div>
+        <div class="price"><span class="currency">$</span>75</div>
+        <div class="unit mono">4 sessions · save $25</div>
+        <p>A series of sessions that allows players to build consistency, improve skills, and gain confidence over time. Best for players who want to see real progress.</p>
+        <ul>
+          <li>Four 60-minute sessions</li>
+          <li>Progress check-ins</li>
+          <li>Flexible scheduling</li>
+          <li>Parent updates after each session</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="/book.html?plan=4pack">View Availability
+            <svg class="arrow" viewBox="0 0 14 10" fill="none"><path d="M1 5h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta">
+  <div class="final-bg" aria-hidden="true"></div>
+  <div class="container final-cta-inner">
+    <div>
+      <div class="section-eyebrow mono" style="color: var(--orange);">Get Started</div>
+      <h2>Give Your Child the <span class="blue">Right</span> Start.</h2>
+      <p>Build confidence, learn the game, and enjoy the process.</p>
+      <div class="hero-cta-row">
+        <a class="btn btn-primary" href="/book.html">Book a Session
+          <svg class="arrow" viewBox="0 0 14 10" fill="none"><path d="M1 5h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#programs">See Programs</a>
+      </div>
+      <div class="micro mono">
+        <span>Simple Scheduling</span>
+        <span>Secure Online Payment</span>
+        <span>Flexible Sessions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="container footer-inner">
+    <a class="wordmark" href="#">
+      <span class="first">first</span><span class="us">_</span><span class="step">step</span>&nbsp;<span class="hoops">hoops</span>
+    </a>
+    <div>© 2026 First Step Hoops · Youth Basketball Training</div>
+  </div>
+</footer>
+
+<!-- ============== TWEAKS ============== -->
+<div id="tweaks">
+  <h4>Tweaks</h4>
+
+  <div class="tweak">
+    <label>Hero Variant</label>
+    <div class="opts" data-key="hero">
+      <button class="opt" data-val="a">A · Photo</button>
+      <button class="opt" data-val="b">B · Split</button>
+      <button class="opt" data-val="c">C · Type</button>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Accent</label>
+    <div class="opts" data-key="accent">
+      <button class="opt" data-val="orange">Orange</button>
+      <button class="opt" data-val="blue">Blue</button>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Wordmark Case</label>
+    <div class="opts" data-key="wm">
+      <button class="opt" data-val="caps">FIRST_step HOOPS</button>
+      <button class="opt" data-val="title">First_step Hoops</button>
+      <button class="opt" data-val="lower">first_step hoops</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "hero": "a",
+    "accent": "blue",
+    "wm": "lower"
+  }/*EDITMODE-END*/;
+
+  const state = { ...TWEAK_DEFAULTS };
+
+  function applyState() {
+    document.body.setAttribute('data-hero', state.hero);
+    document.body.setAttribute('data-accent', state.accent);
+    document.body.setAttribute('data-wm', state.wm);
+    // sync UI
+    document.querySelectorAll('#tweaks .opts').forEach(group => {
+      const key = group.dataset.key;
+      group.querySelectorAll('.opt').forEach(b => {
+        b.classList.toggle('on', b.dataset.val === state[key]);
+      });
+    });
+  }
+
+  document.querySelectorAll('#tweaks .opts').forEach(group => {
+    const key = group.dataset.key;
+    group.querySelectorAll('.opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state[key] = btn.dataset.val;
+        applyState();
+        try {
+          window.parent.postMessage({type: '__edit_mode_set_keys', edits: {[key]: state[key]}}, '*');
+        } catch (e) {}
+      });
+    });
+  });
+
+  // Edit mode wiring — register listener BEFORE announcing availability
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === '__activate_edit_mode') document.getElementById('tweaks').classList.add('on');
+    if (d.type === '__deactivate_edit_mode') document.getElementById('tweaks').classList.remove('on');
+  });
+  applyState();
+  try { window.parent.postMessage({type: '__edit_mode_available'}, '*'); } catch (e) {}
+</script>
+
+</body>
+</html>
