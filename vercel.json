@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/cron/expire-credits",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/admin/cron/send-reminders",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/admin/cron/expiring-credits-warning",
+      "schedule": "0 19 * * *"
+    }
+  ]
+}

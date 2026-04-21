@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
+/*
+ * First Step Hoops design tokens.
+ * Source: docs/design_handoff/design_handoff_first_step_hoops/README.md
+ * Color roles are locked: navy dominant, blue primary action, orange reserved for rare eyebrows.
+ */
+
+@theme {
+  /* Colors */
+  --color-navy: #0f172a;
+  --color-navy-2: #131c33;
+  --color-navy-3: #1b2742;
+  --color-blue: #2563eb;
+  --color-blue-soft: #3b82f6;
+  --color-orange: #f97316;
+  --color-ink: #0f172a;
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e5e7eb;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-700: #334155;
+
+  /* Fonts — CSS variables set by next/font in layout.tsx */
+  --font-display: var(--font-anton);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-wordmark: var(--font-space-grotesk);
+
+  /* Layout */
+  --spacing-maxw: 1280px;
+
+  /* Editorial square-ish corners (handoff §Buttons) */
+  --radius-btn: 2px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --pad-x: clamp(20px, 4vw, 56px);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-navy);
+  color: #fff;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container-fsh {
+  max-width: var(--spacing-maxw);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
 }

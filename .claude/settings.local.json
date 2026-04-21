@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(unzip -l \"First Step Hoops - Claude Design.zip\")",
-      "Bash(unzip -o \"First Step Hoops - Claude Design.zip\" -d \"design_handoff\")"
-    ]
-  }
-}
