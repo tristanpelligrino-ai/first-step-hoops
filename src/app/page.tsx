@@ -1,22 +1,29 @@
+import { Nav } from "@/components/site/Nav";
+import { Hero } from "@/components/site/Hero";
+import { Testimonials } from "@/components/site/Testimonials";
+import { About } from "@/components/site/About";
+import { Skills } from "@/components/site/Skills";
+import { Why } from "@/components/site/Why";
+import { Coach } from "@/components/site/Coach";
+import { Programs } from "@/components/site/Programs";
+import { FinalCta } from "@/components/site/FinalCta";
+import { Footer } from "@/components/site/Footer";
+
 export default function Home() {
   return (
-    <main className="flex flex-1 items-center justify-center">
-      <div className="container-fsh text-center py-32">
-        <p className="font-mono text-xs uppercase tracking-[0.12em] text-blue mb-6">
-          — Youth Basketball Training · Grades 3–5
-        </p>
-        <h1
-          className="font-display uppercase text-white leading-[0.92]"
-          style={{ fontSize: "clamp(64px, 9vw, 132px)" }}
-        >
-          START THE GAME
-          <br />
-          THE <span className="text-blue-soft">RIGHT</span> WAY.
-        </h1>
-        <p className="mt-10 text-sm font-mono uppercase tracking-[0.12em] text-gray-400">
-          Phase 0 scaffold — marketing build in Phase 1
-        </p>
-      </div>
-    </main>
+    <>
+      <Nav />
+      <main>
+        <Hero />
+        <Testimonials />
+        <About />
+        <Skills />
+        <Why />
+        <Coach />
+        <Programs />
+        <FinalCta />
+      </main>
+      <Footer />
+    </>
   );
 }
