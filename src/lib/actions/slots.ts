@@ -122,6 +122,77 @@ export async function deleteSlotAction(slotId: string) {
   redirect("/admin/slots");
 }
 
+/**
+ * Create a slot from the schedule grid (no redirect, returns a result).
+ * Used for click-to-create on the calendar page; callers stay in place and
+ * update the grid state optimistically.
+ */
+export async function createSlotAtAction(params: {
+  startsAtUtc: string;
+  durationMin: number;
+  location: string;
+  isPrivate: boolean;
+  capacity: number;
+}): Promise<
+  | { ok: true; id: string }
+  | { ok: false; error: string }
+> {
+  const adminId = await requireAdmin();
+
+  const parsed = slotInputSchema.safeParse({
+    startsAt: params.startsAtUtc,
+    durationMin: params.durationMin,
+    location: params.location,
+    isPrivate: params.isPrivate ? "on" : "",
+    capacity: params.capacity,
+  });
+
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0].message };
+  }
+
+  const data = parsed.data;
+
+  const [created] = await db
+    .insert(schema.slots)
+    .values({
+      startsAt: new Date(data.startsAt),
+      durationMin: data.durationMin,
+      location: data.location,
+      isPrivate: data.isPrivate,
+      capacity: data.capacity,
+      status: "open",
+      createdBy: adminId,
+    })
+    .returning({ id: schema.slots.id });
+
+  revalidatePath("/admin/slots");
+  revalidatePath("/admin/calendar");
+  return { ok: true, id: created.id };
+}
+
+export async function quickDeleteSlotAction(slotId: string): Promise<
+  | { ok: true }
+  | { ok: false; error: string }
+> {
+  await requireAdmin();
+
+  const [{ value: bookingCount }] = await db
+    .select({ value: count() })
+    .from(schema.bookings)
+    .where(eq(schema.bookings.slotId, slotId));
+
+  if (bookingCount > 0) {
+    return { ok: false, error: "Slot has bookings — cancel from the edit page instead." };
+  }
+
+  await db.delete(schema.slots).where(eq(schema.slots.id, slotId));
+
+  revalidatePath("/admin/slots");
+  revalidatePath("/admin/calendar");
+  return { ok: true };
+}
+
 export async function reopenSlotAction(slotId: string) {
   await requireAdmin();
 

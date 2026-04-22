@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useState } from "react";
 import { TextField } from "./form/TextField";
 import { CheckboxField } from "./form/CheckboxField";
 import { SubmitButton } from "./form/SubmitButton";
@@ -22,40 +22,34 @@ export function SlotForm({
     capacity?: number;
   };
 }) {
-  // For edit mode, convert the stored UTC time to a datetime-local string
-  // using the browser's local timezone. The user sees/edits their local time.
-  const defaultDateTimeLocal = defaults?.startsAtUtc
+  const initialLocal = defaults?.startsAtUtc
     ? utcToLocalInputValue(defaults.startsAtUtc)
     : "";
 
-  const formRef = useRef<HTMLFormElement>(null);
-
-  // On submit, convert the datetime-local value (browser local time) into
-  // a UTC ISO string before the form is submitted. The server action then
-  // parses a proper absolute moment via new Date(isoString).
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    const form = e.currentTarget;
-    const dt = form.elements.namedItem("startsAt") as HTMLInputElement | null;
-    if (!dt || !dt.value) return; // let native required validation run
-    const asUtcIso = new Date(dt.value).toISOString();
-    dt.value = asUtcIso;
-  }
+  const [localDt, setLocalDt] = useState(initialLocal);
+  const utcIso = localToUtcIso(localDt);
 
   return (
-    <form
-      ref={formRef}
-      action={action}
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-5 max-w-[560px]"
-    >
-      <TextField
-        name="startsAt"
-        label="Date & time"
-        type="datetime-local"
-        required
-        defaultValue={defaultDateTimeLocal}
-        hint="Shown in your local time. Converted to UTC on save."
-      />
+    <form action={action} className="flex flex-col gap-5 max-w-[560px]">
+      {/* Visible field — the user types in their local time. Not submitted. */}
+      <label className="flex flex-col gap-2">
+        <span className="mono-eyebrow text-white/60">
+          Date & time<span className="text-orange"> *</span>
+        </span>
+        <input
+          type="datetime-local"
+          required
+          value={localDt}
+          onChange={(e) => setLocalDt(e.target.value)}
+          className="h-11 px-3 bg-navy-2 border border-white/15 rounded-btn text-white text-[15px] focus:border-blue focus:outline-none [color-scheme:dark]"
+        />
+        <span className="text-[12px] text-white/50">
+          Shown in your local time. Converted to UTC on save.
+        </span>
+      </label>
+
+      {/* Hidden field — the UTC ISO string that the server action reads. */}
+      <input type="hidden" name="startsAt" value={utcIso} />
 
       <TextField
         name="durationMin"
@@ -106,4 +100,11 @@ function utcToLocalInputValue(isoUtc: string): string {
     `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
     `T${pad(d.getHours())}:${pad(d.getMinutes())}`
   );
+}
+
+function localToUtcIso(localValue: string): string {
+  if (!localValue) return "";
+  const d = new Date(localValue);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString();
 }
