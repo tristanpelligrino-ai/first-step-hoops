@@ -29,30 +29,37 @@ const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [location, setLocation] = useState("");
-  const [duration, setDuration] = useState(50);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [defaults, setDefaults] = useState<{
+    location: string;
+    duration: number;
+    isPrivate: boolean;
+  }>({ location: "", duration: 50, isPrivate: false });
+  const { location, duration, isPrivate } = defaults;
   const [notice, setNotice] = useState<string | null>(null);
 
-  // Load saved default location from localStorage once mounted.
+  // Load saved defaults from localStorage once after mount. We need the effect
+  // because localStorage isn't available during SSR; reading it in useState's
+  // initializer would cause a hydration mismatch on first paint.
   useEffect(() => {
     const saved = window.localStorage.getItem("fsh.scheduleDefaults");
-    if (saved) {
-      try {
-        const v = JSON.parse(saved);
-        if (typeof v.location === "string") setLocation(v.location);
-        if (typeof v.duration === "number") setDuration(v.duration);
-        if (typeof v.isPrivate === "boolean") setIsPrivate(v.isPrivate);
-      } catch {}
-    }
+    if (!saved) return;
+    try {
+      const v = JSON.parse(saved);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- legitimate sync from localStorage on mount
+      setDefaults((prev) => ({
+        location: typeof v.location === "string" ? v.location : prev.location,
+        duration: typeof v.duration === "number" ? v.duration : prev.duration,
+        isPrivate: typeof v.isPrivate === "boolean" ? v.isPrivate : prev.isPrivate,
+      }));
+    } catch {}
   }, []);
 
   useEffect(() => {
     window.localStorage.setItem(
       "fsh.scheduleDefaults",
-      JSON.stringify({ location, duration, isPrivate }),
+      JSON.stringify(defaults),
     );
-  }, [location, duration, isPrivate]);
+  }, [defaults]);
 
   const weekStart = useMemo(() => new Date(weekStartIso), [weekStartIso]);
   const days = useMemo(() => {
@@ -152,7 +159,7 @@ export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
           <input
             type="text"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e) => setDefaults((d) => ({ ...d, location: e.target.value }))}
             placeholder="e.g. Deep Run HS outdoor courts"
             className="h-11 px-3 bg-navy border border-white/15 rounded-btn text-white text-[15px] focus:border-blue focus:outline-none"
           />
@@ -164,7 +171,7 @@ export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
             min={1}
             max={480}
             value={duration}
-            onChange={(e) => setDuration(Number(e.target.value) || 50)}
+            onChange={(e) => setDefaults((d) => ({ ...d, duration: Number(e.target.value) || 50 }))}
             className="h-11 w-[100px] px-3 bg-navy border border-white/15 rounded-btn text-white text-[15px] focus:border-blue focus:outline-none [color-scheme:dark]"
           />
         </label>
@@ -172,7 +179,7 @@ export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
           <input
             type="checkbox"
             checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
+            onChange={(e) => setDefaults((d) => ({ ...d, isPrivate: e.target.checked }))}
             className="w-4 h-4 accent-blue"
           />
           <span className="text-[14px] text-white">Private</span>
