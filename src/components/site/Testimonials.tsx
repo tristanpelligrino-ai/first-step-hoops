@@ -7,28 +7,27 @@ type Testimonial = {
   avatar: string;
 };
 
-// TODO: replace placeholders with real quotes before launch.
 const testimonials: Testimonial[] = [
   {
     quote:
-      "[Quote from high school coach #1 — two sentences on Tristan's work ethic and how he relates to younger players.]",
-    name: "[Coach Name]",
-    role: "High School Coach · [School]",
-    avatar: "HC",
+      "Tristan played for me in the Deep Run program for two years and was one of the hardest-working and most dedicated young men we've had. I also had the pleasure of teaching him in math class, where he showed the same work ethic and commitment he brought to the court. He is an outstanding young man with incredible character.",
+    name: "Coach Doug Bibby",
+    role: "Varsity Basketball Coach · Deep Run High School",
+    avatar: "DB",
   },
   {
     quote:
-      "[Quote from high school coach #2 — emphasis on fundamentals and character.]",
-    name: "[Coach Name]",
-    role: "High School Coach · [School]",
-    avatar: "HC",
+      "Tristan played a vital role in helping our team win the conference this year. His work ethic and love of basketball is second to none on our team. Always wanting to learn and get better! Your kid will be in great hands if they want to learn how to work hard but also have a lot of fun! I plan on him working out my own kids this summer.",
+    name: "Coach Chris Hamner",
+    role: "Varsity Basketball Coach · Blessed Sacrament Huguenot",
+    avatar: "CH",
   },
   {
     quote:
-      "[Quote from camp coach — how Tristan coached younger kids during summer camp.]",
-    name: "[Coach Name]",
-    role: "Camp Coach · [Camp Name]",
-    avatar: "CC",
+      "Tristan is entering his third summer working at the Bob Foley Basketball Camps and continues to be a conscientious and dependable staff member. He arrives each day enthusiastic and prepared to teach. His passion for working with kids is evident, as he is both patient and genuinely enjoys helping them learn and grow in the game of basketball.",
+    name: "Ms. Louise Foley",
+    role: "Bob Foley Next Level Basketball Camp",
+    avatar: "LF",
   },
 ];
 
