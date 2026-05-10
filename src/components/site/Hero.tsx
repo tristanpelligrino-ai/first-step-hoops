@@ -60,7 +60,7 @@ export function Hero() {
         <div>
           <div className="mono-eyebrow inline-flex items-center gap-[10px] text-blue-soft mb-7">
             <span className="inline-block w-6 h-px bg-blue-soft" aria-hidden="true" />
-            Youth Basketball Training · Grades 3–5
+            Youth Basketball Training · Grades 2–5
           </div>
           <h1
             className="display m-0 mb-7"
@@ -85,7 +85,7 @@ export function Hero() {
         </div>
 
         <div className="self-end grid grid-cols-2 gap-6 border-t border-white/[0.16] pt-7 mt-20">
-          <MetaCell label="Ages" value="3rd – 5th" />
+          <MetaCell label="Ages" value="2nd – 5th" />
           <MetaCell label="Sessions" value="From $25" />
           <MetaCell label="Skill Level" value="All Welcome" />
           <MetaCell label="Focus" value="Fundamentals" />

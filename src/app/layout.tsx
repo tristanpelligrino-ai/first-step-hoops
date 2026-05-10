@@ -29,7 +29,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "First Step Hoops — Youth Basketball Training",
   description:
-    "We help young players build confidence and learn the fundamentals of basketball in a structured, encouraging environment. Grades 3–5.",
+    "We help young players build confidence and learn the fundamentals of basketball in a structured, encouraging environment. Grades 2–5.",
   metadataBase: new URL("https://firststephoops.com"),
 };
 

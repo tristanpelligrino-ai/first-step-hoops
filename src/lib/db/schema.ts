@@ -17,7 +17,7 @@ import { sql } from "drizzle-orm";
 
 // -------------------- Enums --------------------
 
-export const gradeEnum = pgEnum("grade", ["3rd", "4th", "5th", "other"]);
+export const gradeEnum = pgEnum("grade", ["2nd", "3rd", "4th", "5th", "other"]);
 
 export const slotStatusEnum = pgEnum("slot_status", [
   "open",

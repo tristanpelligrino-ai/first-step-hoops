@@ -15,7 +15,7 @@ export const bookingDetailsSchema = z.object({
     .min(7, "Phone number is required")
     .max(40),
   playerName: z.string().trim().min(1, "Player name is required").max(80),
-  grade: z.enum(["3rd", "4th", "5th", "other"], {
+  grade: z.enum(["2nd", "3rd", "4th", "5th", "other"], {
     message: "Pick a grade",
   }),
   experienceNotes: z.string().trim().max(2000).optional().default(""),

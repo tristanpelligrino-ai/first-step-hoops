@@ -99,6 +99,7 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
           label="Grade"
           required
           options={[
+            { value: "2nd", label: "2nd grade" },
             { value: "3rd", label: "3rd grade" },
             { value: "4th", label: "4th grade" },
             { value: "5th", label: "5th grade" },

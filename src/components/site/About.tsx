@@ -28,7 +28,7 @@ export function About() {
             </p>
             <div className="mt-12 grid grid-cols-3 gap-6 border-t border-gray-200 pt-7">
               <Stat value="5" label="Core skills" />
-              <Stat value="3–5" label="Grade range" />
+              <Stat value="2–5" label="Grade range" />
               <Stat value="0" label="Pressure" />
             </div>
           </div>
