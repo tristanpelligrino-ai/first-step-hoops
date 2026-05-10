@@ -26,11 +26,29 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
 });
 
+const SITE_NAME = "First Step Hoops";
+const SITE_TITLE = "First Step Hoops — Youth Basketball Training";
+const SITE_DESCRIPTION =
+  "We help young players build confidence and learn the fundamentals of basketball in a structured, encouraging environment. Grades 2–5.";
+
 export const metadata: Metadata = {
-  title: "First Step Hoops — Youth Basketball Training",
-  description:
-    "We help young players build confidence and learn the fundamentals of basketball in a structured, encouraging environment. Grades 2–5.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   metadataBase: new URL("https://firststephoops.com"),
+  applicationName: SITE_NAME,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: SITE_NAME,
+    type: "website",
+    locale: "en_US",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
