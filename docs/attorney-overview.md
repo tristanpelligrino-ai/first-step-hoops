@@ -76,7 +76,7 @@ First Step Hoops is a youth basketball training business targeting 3rd–5th gra
 
 ## 5. How the Booking Flow Works (for context)
 
-A parent visits **firststep-hoops.com**, views available time slots, and books one. The flow:
+A parent visits **firststephoops.com**, views available time slots, and books one. The flow:
 
 1. Picks plan (single session or 4-pack)
 2. Selects an available slot
@@ -126,4 +126,4 @@ Data is stored in a managed Postgres database (Supabase or Neon) with access res
 
 **Owner:** Tristan Pelligrino
 **Email:** tpelligrino@motionagency.io
-**Business domain:** firststep-hoops.com
+**Business domain:** firststephoops.com
