@@ -378,7 +378,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 
 # Resend
 RESEND_API_KEY=
-RESEND_FROM_EMAIL=bookings@firststephoops.com
+RESEND_FROM_EMAIL=bookings@firststep-hoops.com
 
 # Twilio
 TWILIO_ACCOUNT_SID=
@@ -390,7 +390,7 @@ ADMIN_SESSION_SECRET=       # 32+ chars random
 MAGIC_LINK_SECRET=          # 32+ chars random, used to hash tokens
 
 # App
-NEXT_PUBLIC_APP_URL=https://firststephoops.com
+NEXT_PUBLIC_APP_URL=https://firststep-hoops.com
 CRON_SECRET=                # random, shared with vercel cron
 ```
 
@@ -408,7 +408,7 @@ Each phase is a shippable increment. Aim: working, demoable progress at the end 
 **Phase 1 — Marketing site**
 - Port Claude Design HTML to Next.js + Tailwind components
 - Legal pages (stub; real text pending attorney)
-- Deploy to Vercel on firststephoops.com
+- Deploy to Vercel on firststep-hoops.com
 
 **Phase 2 — Admin foundation**
 - Admin login + session
@@ -498,7 +498,7 @@ Each phase is a shippable increment. Aim: working, demoable progress at the end 
 
 1. **Attorney-drafted:** waiver text, privacy policy, terms of service (placeholders until then)
 2. **Tristan:** form LLC (pending attorney advice), open business bank account, create Stripe account in parent's name
-3. **Tristan:** provision Twilio phone number, verify sender domain in Resend (`firststephoops.com`)
+3. **Tristan:** provision Twilio phone number, verify sender domain in Resend (`firststep-hoops.com`)
 4. **Tristan:** decide on Postgres host (Neon recommended for Vercel fit)
 5. **Tristan:** background-check service for coach
 6. **Tristan:** session location finalized (affects liability + what we put in slot defaults)
