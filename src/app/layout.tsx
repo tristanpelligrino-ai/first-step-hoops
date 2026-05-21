@@ -34,7 +34,7 @@ const SITE_DESCRIPTION =
 export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
-  metadataBase: new URL("https://firststephoops.com"),
+  metadataBase: new URL("https://firststep-hoops.com"),
   applicationName: SITE_NAME,
   openGraph: {
     title: SITE_TITLE,
