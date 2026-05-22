@@ -4,6 +4,8 @@ import type Stripe from "stripe";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
+import { sendBookingConfirmationEmail } from "@/lib/email";
+import { formatDateLong, formatTimeShort } from "@/lib/time";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,6 +40,14 @@ export async function POST(req: NextRequest) {
         const bookingId = session.metadata?.bookingId;
         if (!bookingId) break;
 
+        // Skip if already finalized — makes Stripe webhook retries idempotent.
+        const [existing] = await db
+          .select({ paymentIntentId: schema.bookings.stripePaymentIntentId })
+          .from(schema.bookings)
+          .where(eq(schema.bookings.id, bookingId))
+          .limit(1);
+        if (!existing || existing.paymentIntentId) break;
+
         await db
           .update(schema.bookings)
           .set({
@@ -47,6 +57,42 @@ export async function POST(req: NextRequest) {
                 : (session.payment_intent?.id ?? null),
           })
           .where(eq(schema.bookings.id, bookingId));
+
+        // Best-effort confirmation email — must never fail the webhook.
+        try {
+          const [info] = await db
+            .select({
+              parentEmail: schema.users.email,
+              parentName: schema.users.fullName,
+              playerName: schema.players.name,
+              startsAt: schema.slots.startsAt,
+              durationMin: schema.slots.durationMin,
+              location: schema.slots.location,
+            })
+            .from(schema.bookings)
+            .innerJoin(schema.users, eq(schema.bookings.userId, schema.users.id))
+            .innerJoin(
+              schema.players,
+              eq(schema.bookings.playerId, schema.players.id),
+            )
+            .innerJoin(schema.slots, eq(schema.bookings.slotId, schema.slots.id))
+            .where(eq(schema.bookings.id, bookingId))
+            .limit(1);
+
+          if (info) {
+            await sendBookingConfirmationEmail({
+              to: info.parentEmail,
+              parentName: info.parentName,
+              playerName: info.playerName,
+              sessionDate: formatDateLong(info.startsAt),
+              sessionTime: formatTimeShort(info.startsAt),
+              durationMin: info.durationMin,
+              location: info.location,
+            });
+          }
+        } catch (err) {
+          console.error("Confirmation email step failed:", err);
+        }
         break;
       }
 
