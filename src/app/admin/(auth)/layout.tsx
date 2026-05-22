@@ -7,7 +7,8 @@ const navItems = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/calendar", label: "Calendar" },
   { href: "/admin/slots", label: "Slots" },
-  // Bookings, Customers, Waivers come online in later phases.
+  { href: "/admin/waiver", label: "Waiver" },
+  // Bookings and Customers come online in later phases.
 ];
 
 export default async function AdminAuthLayout({

@@ -1,7 +1,8 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { db, schema } from "@/lib/db";
 import { getStripe, PRICES } from "@/lib/stripe";
 import { bookingDetailsSchema } from "@/lib/validation/booking";
@@ -17,6 +18,7 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
     grade: formData.get("grade"),
     experienceNotes: formData.get("experienceNotes") ?? "",
     medicalNotes: formData.get("medicalNotes") ?? "",
+    waiverTypedName: formData.get("waiverTypedName") ?? "",
   });
 
   if (!parsed.success) {
@@ -28,6 +30,13 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
   }
 
   const data = parsed.data;
+
+  // The liability waiver must be explicitly agreed to before we take payment.
+  if (formData.get("waiverAccepted") !== "on") {
+    redirect(
+      `/book/details?slot=${encodeURIComponent(data.slotId)}&error=${encodeURIComponent("Please agree to the liability waiver to continue.")}`,
+    );
+  }
 
   // Verify slot is bookable
   const [slot] = await db
@@ -42,6 +51,20 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
 
   if (slot.isPrivate || slot.status !== "open" || slot.startsAt < new Date()) {
     redirect("/book/slots?error=unavailable");
+  }
+
+  // A published waiver must exist to bind the parent's signature to.
+  const [currentWaiver] = await db
+    .select({ id: schema.waiverVersions.id })
+    .from(schema.waiverVersions)
+    .where(eq(schema.waiverVersions.isCurrent, true))
+    .orderBy(desc(schema.waiverVersions.effectiveFrom))
+    .limit(1);
+
+  if (!currentWaiver) {
+    redirect(
+      `/book/details?slot=${encodeURIComponent(data.slotId)}&error=${encodeURIComponent("Booking is briefly unavailable. Please try again shortly.")}`,
+    );
   }
 
   // Atomic claim: only succeeds if slot is still 'open' at the moment we run
@@ -95,6 +118,26 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
     })
     .returning({ id: schema.players.id });
 
+  // Record the signed liability waiver — electronic signature + audit metadata.
+  const requestHeaders = await headers();
+  const ipAddress =
+    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    requestHeaders.get("x-real-ip") ||
+    "unknown";
+  const userAgent = requestHeaders.get("user-agent") || "unknown";
+
+  const [signedWaiver] = await db
+    .insert(schema.signedWaivers)
+    .values({
+      waiverVersionId: currentWaiver.id,
+      userId,
+      playerId: player.id,
+      typedName: data.waiverTypedName,
+      ipAddress,
+      userAgent,
+    })
+    .returning({ id: schema.signedWaivers.id });
+
   // Create pending booking — payment_intent stays null until webhook confirms
   const [booking] = await db
     .insert(schema.bookings)
@@ -105,6 +148,7 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
       status: "scheduled",
       paidWith: "single_purchase",
       stripePaymentIntentId: null,
+      signedWaiverId: signedWaiver.id,
     })
     .returning({ id: schema.bookings.id });
 

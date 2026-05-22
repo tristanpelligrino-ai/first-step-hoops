@@ -20,6 +20,11 @@ export const bookingDetailsSchema = z.object({
   }),
   experienceNotes: z.string().trim().max(2000).optional().default(""),
   medicalNotes: z.string().trim().max(2000).optional().default(""),
+  waiverTypedName: z
+    .string()
+    .trim()
+    .min(2, "Type your full legal name to sign the waiver")
+    .max(120),
 });
 
 export type BookingDetails = z.infer<typeof bookingDetailsSchema>;

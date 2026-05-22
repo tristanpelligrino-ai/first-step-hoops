@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { formatDateLong, formatTimeShort, BUSINESS_TZ } from "@/lib/time";
 import { startSingleSessionCheckoutAction } from "@/lib/actions/booking";
@@ -33,6 +33,36 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
   // Don't allow filling the form for an unavailable slot
   if (slot.isPrivate || slot.status !== "open" || slot.startsAt < new Date()) {
     redirect("/book/slots?error=unavailable");
+  }
+
+  const [currentWaiver] = await db
+    .select()
+    .from(schema.waiverVersions)
+    .where(eq(schema.waiverVersions.isCurrent, true))
+    .orderBy(desc(schema.waiverVersions.effectiveFrom))
+    .limit(1);
+
+  if (!currentWaiver) {
+    return (
+      <div className="container-fsh py-20">
+        <h1
+          className="display m-0 mb-6"
+          style={{ fontSize: "clamp(48px, 7vw, 96px)" }}
+        >
+          Your Info.
+        </h1>
+        <p className="text-white/70 max-w-[58ch] text-[15px]">
+          Online booking is briefly unavailable. Please check back shortly — or
+          get in touch and we&apos;ll get your player booked.
+        </p>
+        <Link
+          href="/book/slots"
+          className="inline-block mt-6 text-white/60 hover:text-white text-[13px] font-mono uppercase tracking-[0.08em] transition-colors"
+        >
+          ← Back to sessions
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -116,6 +146,40 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
           name="medicalNotes"
           label="Medical notes"
           placeholder="Allergies, asthma, recent injuries, anything the coach should know in case of emergency."
+          fullWidth
+        />
+
+        <div className="col-span-2 mt-4">
+          <SectionLabel>Liability waiver</SectionLabel>
+        </div>
+        <div className="col-span-2">
+          <div className="max-h-72 overflow-y-auto p-4 bg-navy-2 border border-white/15 rounded-btn text-[13px] leading-relaxed text-white/75 whitespace-pre-wrap">
+            {currentWaiver.bodyMd}
+          </div>
+          <div className="mono-eyebrow text-white/40 mt-2">
+            Waiver version {currentWaiver.version}
+          </div>
+        </div>
+        <label className="col-span-2 flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="waiverAccepted"
+            value="on"
+            required
+            className="mt-[3px] w-4 h-4 accent-blue shrink-0"
+          />
+          <span className="text-[14px] leading-snug text-white/80">
+            I have read and agree to the liability waiver above, and I confirm I
+            am the parent or legal guardian of the player named above.
+            <span className="text-orange"> *</span>
+          </span>
+        </label>
+        <Field
+          name="waiverTypedName"
+          label="Type your full legal name to sign"
+          required
+          autoComplete="name"
+          hint="This is your electronic signature — we record the date, time, and device with it."
           fullWidth
         />
 
