@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { desc } from "drizzle-orm";
+import { asc, count, gt, lte } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatDateLong, formatTimeShort } from "@/lib/time";
@@ -13,11 +13,20 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function SlotsPage() {
+  const now = new Date();
+
+  // Only upcoming slots — once a slot's start time passes it drops off the board.
   const rows = await db
     .select()
     .from(schema.slots)
-    .orderBy(desc(schema.slots.startsAt))
+    .where(gt(schema.slots.startsAt, now))
+    .orderBy(asc(schema.slots.startsAt))
     .limit(200);
+
+  const [{ value: pastCount }] = await db
+    .select({ value: count() })
+    .from(schema.slots)
+    .where(lte(schema.slots.startsAt, now));
 
   return (
     <div className="px-10 py-10">
@@ -36,7 +45,7 @@ export default async function SlotsPage() {
 
       {rows.length === 0 ? (
         <div className="p-10 border border-white/10 bg-navy-2/40 text-white/70">
-          No slots yet. Click <strong className="text-white">+ New Slot</strong> to create your first one.
+          No upcoming slots. Click <strong className="text-white">+ New Slot</strong> to add availability.
         </div>
       ) : (
         <div className="border border-white/10 bg-navy-2/40 overflow-hidden">
@@ -80,6 +89,12 @@ export default async function SlotsPage() {
           </table>
         </div>
       )}
+
+      {pastCount > 0 ? (
+        <p className="mt-4 text-[12px] font-mono text-white/40">
+          {pastCount} past slot{pastCount === 1 ? "" : "s"} hidden.
+        </p>
+      ) : null}
     </div>
   );
 }
