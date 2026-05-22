@@ -63,7 +63,7 @@ export default async function CalendarPage({ searchParams }: Props) {
       />
 
       <ScheduleGrid
-        weekStartIso={weekStart.toISOString()}
+        weekStartParam={toDateParam(weekStart)}
         slots={slotsForGrid}
         businessTz={BUSINESS_TZ}
       />
@@ -85,4 +85,9 @@ function startOfWeekFromDateParam(param: string): Date {
   const [, y, m, d] = match;
   const dt = new Date(Number(y), Number(m) - 1, Number(d));
   return startOfWeekLocal(dt);
+}
+
+function toDateParam(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }

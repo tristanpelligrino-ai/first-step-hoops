@@ -6,6 +6,7 @@ import { TextField } from "@/components/admin/form/TextField";
 import { SubmitButton } from "@/components/admin/form/SubmitButton";
 import { publishWaiverVersionAction } from "@/lib/actions/waiver";
 import { formatDateLong } from "@/lib/time";
+import { Markdown } from "@/components/Markdown";
 
 export const metadata: Metadata = {
   title: "Waiver — First Step Hoops Admin",
@@ -54,8 +55,8 @@ export default async function AdminWaiverPage({ searchParams }: Props) {
                 Effective {formatDateLong(current.effectiveFrom)}
               </span>
             </div>
-            <div className="px-4 py-4 max-h-80 overflow-y-auto text-[13px] leading-relaxed text-white/75 whitespace-pre-wrap">
-              {current.bodyMd}
+            <div className="px-4 py-4 max-h-80 overflow-y-auto">
+              <Markdown>{current.bodyMd}</Markdown>
             </div>
           </div>
         ) : (

@@ -16,7 +16,7 @@ type Slot = {
 };
 
 type Props = {
-  weekStartIso: string; // ISO UTC for the Sunday midnight (local) that starts the visible week
+  weekStartParam: string; // YYYY-MM-DD for the Sunday that starts the visible week
   slots: Slot[];
   businessTz: string; // passed for display; actual TZ math uses browser for now
 };
@@ -26,7 +26,7 @@ const LAST_HOUR = 20;   // grid ends at 20:00 local (last cell = 20:00-20:59)
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
+export function ScheduleGrid({ weekStartParam, slots, businessTz }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [defaults, setDefaults] = useState<{
@@ -61,7 +61,7 @@ export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
     );
   }, [defaults]);
 
-  const weekStart = useMemo(() => new Date(weekStartIso), [weekStartIso]);
+  const weekStart = useMemo(() => parseLocalDate(weekStartParam), [weekStartParam]);
   const days = useMemo(() => {
     const out: Date[] = [];
     for (let i = 0; i < 7; i++) {
@@ -144,7 +144,6 @@ export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
     });
   }
 
-  const prevWeek = shiftWeek(weekStart, -7);
   const nextWeek = shiftWeek(weekStart, 7);
   const thisWeek = startOfWeek(new Date());
 
@@ -189,12 +188,6 @@ export function ScheduleGrid({ weekStartIso, slots, businessTz }: Props) {
       {/* Week nav */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
         <div className="flex items-center gap-2">
-          <Link
-            href={`/admin/calendar?week=${toDateParam(prevWeek)}`}
-            className="h-9 px-4 inline-flex items-center border border-white/20 hover:border-white/60 text-white text-[13px] rounded-btn transition-colors"
-          >
-            ← Prev
-          </Link>
           <Link
             href={`/admin/calendar?week=${toDateParam(thisWeek)}`}
             className="h-9 px-4 inline-flex items-center border border-white/20 hover:border-white/60 text-white text-[13px] rounded-btn transition-colors"
@@ -350,6 +343,12 @@ function startOfWeek(d: Date): Date {
   out.setHours(0, 0, 0, 0);
   out.setDate(out.getDate() - out.getDay()); // Sunday = 0
   return out;
+}
+
+function parseLocalDate(s: string): Date {
+  // Parse YYYY-MM-DD as local-time midnight — no UTC/timezone shift.
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
 }
 
 function shiftWeek(d: Date, days: number): Date {

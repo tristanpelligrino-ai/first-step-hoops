@@ -6,6 +6,7 @@ import { db, schema } from "@/lib/db";
 import { formatDateLong, formatTimeShort, BUSINESS_TZ } from "@/lib/time";
 import { startSingleSessionCheckoutAction } from "@/lib/actions/booking";
 import { SubmitButton } from "@/components/admin/form/SubmitButton";
+import { Markdown } from "@/components/Markdown";
 
 export const metadata: Metadata = {
   title: "Your Info — First Step Hoops",
@@ -153,8 +154,8 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
           <SectionLabel>Liability waiver</SectionLabel>
         </div>
         <div className="col-span-2">
-          <div className="max-h-72 overflow-y-auto p-4 bg-navy-2 border border-white/15 rounded-btn text-[13px] leading-relaxed text-white/75 whitespace-pre-wrap">
-            {currentWaiver.bodyMd}
+          <div className="max-h-72 overflow-y-auto p-4 bg-navy-2 border border-white/15 rounded-btn">
+            <Markdown>{currentWaiver.bodyMd}</Markdown>
           </div>
           <div className="mono-eyebrow text-white/40 mt-2">
             Waiver version {currentWaiver.version}
