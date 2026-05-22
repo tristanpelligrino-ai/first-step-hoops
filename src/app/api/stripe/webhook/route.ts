@@ -4,7 +4,10 @@ import type Stripe from "stripe";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
-import { sendBookingConfirmationEmail } from "@/lib/email";
+import {
+  sendBookingConfirmationEmail,
+  sendBookingNotificationEmail,
+} from "@/lib/email";
 import { formatDateLong, formatTimeShort } from "@/lib/time";
 
 export const runtime = "nodejs";
@@ -58,12 +61,14 @@ export async function POST(req: NextRequest) {
           })
           .where(eq(schema.bookings.id, bookingId));
 
-        // Best-effort confirmation email — must never fail the webhook.
+        // Best-effort emails — confirmation to the parent + notification to us.
+        // Must never fail the webhook.
         try {
           const [info] = await db
             .select({
               parentEmail: schema.users.email,
               parentName: schema.users.fullName,
+              parentPhone: schema.users.phone,
               playerName: schema.players.name,
               startsAt: schema.slots.startsAt,
               durationMin: schema.slots.durationMin,
@@ -80,18 +85,21 @@ export async function POST(req: NextRequest) {
             .limit(1);
 
           if (info) {
-            await sendBookingConfirmationEmail({
-              to: info.parentEmail,
+            const emailInfo = {
               parentName: info.parentName,
+              parentEmail: info.parentEmail,
+              parentPhone: info.parentPhone,
               playerName: info.playerName,
               sessionDate: formatDateLong(info.startsAt),
               sessionTime: formatTimeShort(info.startsAt),
               durationMin: info.durationMin,
               location: info.location,
-            });
+            };
+            await sendBookingConfirmationEmail(emailInfo);
+            await sendBookingNotificationEmail(emailInfo);
           }
         } catch (err) {
-          console.error("Confirmation email step failed:", err);
+          console.error("Booking email step failed:", err);
         }
         break;
       }

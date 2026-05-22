@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
 import { formatDateLong, formatTimeShort, BUSINESS_TZ } from "@/lib/time";
+import { CONTACT_EMAIL } from "@/lib/email";
 
 export const metadata: Metadata = {
   title: "Booking Confirmed — First Step Hoops",
@@ -51,7 +52,7 @@ export default async function ConfirmPage({ searchParams }: Props) {
         if (row) {
           if (!row.paymentIntentId) {
             pendingMsg =
-              "Payment is processing — your booking will be confirmed in a moment. You can close this page; we'll text + email you when it's confirmed.";
+              "Payment is processing — your booking will be confirmed in a moment. You can close this page; we'll email you when it's confirmed.";
           }
           booking = {
             when: formatDateLong(row.slotStartsAt),
@@ -109,10 +110,16 @@ export default async function ConfirmPage({ searchParams }: Props) {
           <strong className="text-white">What&apos;s next:</strong>
         </p>
         <ul className="list-disc pl-5 space-y-2">
-          <li>You&apos;ll get a confirmation by email and SMS shortly.</li>
+          <li>A confirmation email is on its way to your inbox.</li>
           <li>
-            Need to reschedule or have a question? Just text us back when you
-            get the confirmation message.
+            Need to cancel or reschedule? Email{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="text-blue-soft hover:text-blue underline"
+            >
+              {CONTACT_EMAIL}
+            </a>{" "}
+            at least 48 hours before your session.
           </li>
           <li>Show up 5 minutes early for your first session.</li>
         </ul>

@@ -117,7 +117,7 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
           type="tel"
           required
           autoComplete="tel"
-          hint="We'll send booking + reminder texts here."
+          hint="In case the coach needs to reach you about a session."
           fullWidth
         />
 
@@ -197,7 +197,7 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
         <p className="col-span-2 text-[12px] text-white/50 max-w-[60ch] mt-2">
           Payment is processed securely by Stripe. We never see or store your
           card information. You&apos;ll receive a receipt by email and a booking
-          confirmation by text.
+          confirmation by email.
         </p>
       </form>
     </div>

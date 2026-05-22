@@ -92,7 +92,7 @@ export async function cancelSlotAction(slotId: string) {
     .set({ status: "canceled" })
     .where(eq(schema.slots.id, slotId));
 
-  // NOTE: Phase 7 will also cancel associated bookings + notify parents via SMS/email.
+  // NOTE: Phase 7 will also cancel associated bookings + notify parents by email.
   // For now we only update the slot status.
 
   revalidatePath("/admin/slots");

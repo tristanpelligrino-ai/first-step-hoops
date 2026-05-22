@@ -191,7 +191,7 @@ export default async function BookingDetailPage({ params, searchParams }: Props)
           </form>
           <p className="mt-3 text-[12px] text-white/40">
             Refunds and reschedules aren&apos;t in the panel yet — handle refunds
-            in Stripe and reschedules by text for now.
+            in Stripe and reschedules by email for now.
           </p>
         </div>
       </div>
