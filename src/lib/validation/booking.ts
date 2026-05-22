@@ -28,3 +28,10 @@ export const bookingDetailsSchema = z.object({
 });
 
 export type BookingDetails = z.infer<typeof bookingDetailsSchema>;
+
+export const bookingStatusUpdateSchema = z.object({
+  bookingId: z.string().uuid("Invalid booking"),
+  status: z.enum(["scheduled", "delivered", "no_show", "canceled"], {
+    message: "Invalid status",
+  }),
+});
