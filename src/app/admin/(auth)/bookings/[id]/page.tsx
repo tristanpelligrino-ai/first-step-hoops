@@ -7,6 +7,7 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatDateLong, formatTimeShort } from "@/lib/time";
 import { PRICES } from "@/lib/stripe";
 import { updateBookingStatusAction } from "@/lib/actions/bookings";
+import { Markdown } from "@/components/Markdown";
 
 export const metadata: Metadata = {
   title: "Booking — First Step Hoops Admin",
@@ -51,7 +52,10 @@ export default async function BookingDetailPage({ params, searchParams }: Props)
       parentPhone: schema.users.phone,
       waiverTypedName: schema.signedWaivers.typedName,
       waiverSignedAt: schema.signedWaivers.signedAt,
+      waiverIp: schema.signedWaivers.ipAddress,
+      waiverUserAgent: schema.signedWaivers.userAgent,
       waiverVersion: schema.waiverVersions.version,
+      waiverBodyMd: schema.waiverVersions.bodyMd,
     })
     .from(schema.bookings)
     .innerJoin(schema.slots, eq(schema.bookings.slotId, schema.slots.id))
@@ -144,22 +148,45 @@ export default async function BookingDetailPage({ params, searchParams }: Props)
           </Row>
         </Card>
 
-        <Card title="Payment & waiver">
+        <Card title="Payment">
           <Row label="Payment">
             {paid
               ? `Paid · $${(amountCents / 100).toFixed(2)}`
               : "Pending payment"}
           </Row>
           <Row label="Booked">{formatDateLong(b.createdAt)}</Row>
-          <Row label="Waiver">
-            {b.waiverTypedName
-              ? `Signed by ${b.waiverTypedName}` +
-                (b.waiverVersion ? ` (${b.waiverVersion})` : "") +
-                (b.waiverSignedAt
-                  ? ` on ${formatDateLong(b.waiverSignedAt)}`
-                  : "")
-              : "No waiver on file"}
-          </Row>
+        </Card>
+
+        <Card title="Signed waiver">
+          {b.waiverTypedName ? (
+            <>
+              <Row label="Signed by">{b.waiverTypedName}</Row>
+              <Row label="Version">{b.waiverVersion ?? "—"}</Row>
+              <Row label="Signed at">
+                {b.waiverSignedAt
+                  ? `${formatDateLong(b.waiverSignedAt)} · ${formatTimeShort(b.waiverSignedAt)}`
+                  : "—"}
+              </Row>
+              <Row label="IP address">{b.waiverIp || "—"}</Row>
+              <Row label="Device">
+                <span className="break-all text-white/70 text-[13px]">
+                  {b.waiverUserAgent || "—"}
+                </span>
+              </Row>
+              {b.waiverBodyMd ? (
+                <details className="mt-2 border-t border-white/10 pt-3">
+                  <summary className="cursor-pointer text-blue-soft hover:text-blue text-[13px] font-medium select-none">
+                    View the exact waiver text they agreed to
+                  </summary>
+                  <div className="mt-3 max-h-80 overflow-y-auto p-4 bg-navy border border-white/10 rounded-btn text-[13px]">
+                    <Markdown>{b.waiverBodyMd}</Markdown>
+                  </div>
+                </details>
+              ) : null}
+            </>
+          ) : (
+            <p className="text-[14px] text-white/50">No waiver on file.</p>
+          )}
         </Card>
 
         <div className="p-5 border border-white/15 bg-navy-2/40 rounded-btn">
