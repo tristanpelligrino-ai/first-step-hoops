@@ -13,6 +13,7 @@ type Slot = {
   status: "open" | "booked" | "canceled";
   isPrivate: boolean;
   capacity: number;
+  seatsTaken: number;
 };
 
 type Props = {
@@ -270,7 +271,15 @@ function Cell({
   onClick,
   onQuickDelete,
 }: {
-  slot?: { id: string; status?: string; isPrivate?: boolean; pending?: boolean; location?: string };
+  slot?: {
+    id: string;
+    status?: string;
+    isPrivate?: boolean;
+    pending?: boolean;
+    location?: string;
+    capacity?: number;
+    seatsTaken?: number;
+  };
   isPending: boolean;
   onClick: () => void;
   onQuickDelete: (e: React.MouseEvent, id: string) => void;
@@ -292,29 +301,46 @@ function Cell({
   }
   const isPendingSlot = "pending" in slot && slot.pending;
   const status = (slot as Slot).status ?? "open";
+  const capacity = slot.capacity ?? 1;
+  const seatsTaken = slot.seatsTaken ?? 0;
+  // A capacity > 1 slot is a group / clinic session. It stays "open" until full,
+  // so we show seat occupancy (e.g. 2/4) rather than just Open/Booked, and turn
+  // it orange once every seat is taken.
+  const isGroup = capacity > 1;
+  const isFull = isGroup && seatsTaken >= capacity;
+
   const stateClasses = isPendingSlot
     ? "bg-blue/30 animate-pulse text-white"
-    : status === "open"
-      ? "bg-blue/30 hover:bg-blue/50 text-white"
-      : status === "booked"
+    : status === "canceled"
+      ? "bg-white/5 text-white/40"
+      : status === "booked" || isFull
         ? "bg-orange/30 hover:bg-orange/50 text-white"
-        : "bg-white/5 text-white/40";
+        : "bg-blue/30 hover:bg-blue/50 text-white";
+
+  const label = isGroup
+    ? `Grp ${seatsTaken}/${capacity}`
+    : status === "open"
+      ? "Open"
+      : status === "booked"
+        ? "Booked"
+        : "Canceled";
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={isPending || isPendingSlot}
       className={`${base} ${stateClasses}`}
-      title={`${status}${slot.isPrivate ? " · private" : ""} — click to edit`}
+      title={`${isGroup ? `group session · ${seatsTaken}/${capacity} booked` : status}${slot.isPrivate ? " · private" : ""} — click to edit`}
     >
       <span className="font-semibold text-[12px] truncate">
-        {status === "open" ? "Open" : status === "booked" ? "Booked" : "Canceled"}
+        {label}
         {slot.isPrivate ? " · P" : ""}
       </span>
       {slot.location ? (
         <span className="text-white/60 truncate">{slot.location}</span>
       ) : null}
-      {!isPendingSlot && status === "open" ? (
+      {!isPendingSlot && status === "open" && seatsTaken === 0 ? (
         <span
           role="button"
           tabIndex={0}

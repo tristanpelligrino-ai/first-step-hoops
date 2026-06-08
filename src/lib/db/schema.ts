@@ -103,6 +103,13 @@ export const slots = pgTable("slots", {
   status: slotStatusEnum("status").notNull().default("open"),
   isPrivate: boolean("is_private").notNull().default(false),
   capacity: integer("capacity").notNull().default(1),
+  // Number of seats already claimed. Used to enforce capacity on group /
+  // multi-seat slots via an atomic increment (single-seat public slots still
+  // use the status open->booked flip and leave this at 0).
+  seatsTaken: integer("seats_taken").notNull().default(0),
+  // Per-seat price override in cents. null = standard single-session price.
+  // Set to a discounted amount for group / clinic sessions.
+  priceCentsOverride: integer("price_cents_override"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

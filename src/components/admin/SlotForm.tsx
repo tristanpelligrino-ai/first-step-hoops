@@ -20,6 +20,7 @@ export function SlotForm({
     location?: string;
     isPrivate?: boolean;
     capacity?: number;
+    priceDollars?: number;
   };
 }) {
   const initialLocal = defaults?.startsAtUtc
@@ -76,14 +77,25 @@ export function SlotForm({
         min={1}
         max={20}
         defaultValue={defaults?.capacity ?? 1}
-        hint="Leave at 1 for standard 1-on-1 slots. Higher for private sibling bookings."
+        hint="Leave at 1 for standard 1-on-1 slots. Set higher (e.g. 4) for a group / clinic session several players share."
+      />
+
+      <TextField
+        name="priceDollars"
+        label="Price per player ($)"
+        type="number"
+        min={0}
+        step="0.01"
+        defaultValue={defaults?.priceDollars ?? ""}
+        placeholder="25.00"
+        hint="Leave blank for the standard $25 single-session price. Lower it for a discounted group session (e.g. 18.75)."
       />
 
       <CheckboxField
         name="isPrivate"
         label="Private slot"
         defaultChecked={defaults?.isPrivate}
-        hint="Private slots are hidden from public booking — used for invite-only / sibling bookings."
+        hint="Private slots are hidden from the public calendar — each player books through the share link on the slot's detail page. Use this for group / clinic sessions."
       />
 
       <div className="flex gap-3 mt-2">

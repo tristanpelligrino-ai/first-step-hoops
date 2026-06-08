@@ -31,10 +31,19 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
 
   if (!slot) notFound();
 
-  // Don't allow filling the form for an unavailable slot
-  if (slot.isPrivate || slot.status !== "open" || slot.startsAt < new Date()) {
+  // Don't allow filling the form for an unavailable slot. Private slots are
+  // allowed here — they're group sessions reached via their direct share link.
+  if (slot.status !== "open" || slot.startsAt < new Date()) {
     redirect("/book/slots?error=unavailable");
   }
+
+  if (slot.seatsTaken >= slot.capacity) {
+    redirect("/book/slots?error=unavailable");
+  }
+
+  const isGroup = slot.capacity > 1;
+  const priceCents = slot.priceCentsOverride ?? 2500;
+  const priceLabel = `$${(priceCents / 100).toFixed(priceCents % 100 === 0 ? 0 : 2)}`;
 
   const [currentWaiver] = await db
     .select()
@@ -87,6 +96,12 @@ export default async function BookingDetailsPage({ searchParams }: Props) {
         <div className="text-[14px] text-white/70 mt-1">{slot.location}</div>
         <div className="text-[12px] font-mono uppercase tracking-[0.08em] text-white/50 mt-2">
           {slot.durationMin} min · {BUSINESS_TZ.replace("_", " ")}
+        </div>
+        <div className="text-[15px] text-white mt-3 font-semibold">
+          {priceLabel}
+          {isGroup ? (
+            <span className="text-white/60 font-normal"> per player · group session</span>
+          ) : null}
         </div>
       </div>
 

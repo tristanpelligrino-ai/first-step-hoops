@@ -44,6 +44,7 @@ export default async function CalendarPage({ searchParams }: Props) {
     status: s.status,
     isPrivate: s.isPrivate,
     capacity: s.capacity,
+    seatsTaken: s.seatsTaken,
   }));
 
   return (
