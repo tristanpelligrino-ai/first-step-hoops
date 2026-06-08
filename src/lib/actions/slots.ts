@@ -15,6 +15,11 @@ async function requireAdmin() {
   return session.adminId!;
 }
 
+/** Dollars (or undefined when blank) -> integer cents, or null for no override. */
+function dollarsToCents(dollars: number | undefined): number | null {
+  return dollars === undefined ? null : Math.round(dollars * 100);
+}
+
 export async function createSlotAction(formData: FormData) {
   const adminId = await requireAdmin();
 
@@ -24,6 +29,7 @@ export async function createSlotAction(formData: FormData) {
     location: formData.get("location"),
     isPrivate: formData.get("isPrivate") ?? "",
     capacity: formData.get("capacity") ?? 1,
+    priceDollars: formData.get("priceDollars") ?? "",
   });
 
   if (!parsed.success) {
@@ -39,6 +45,7 @@ export async function createSlotAction(formData: FormData) {
     location: data.location,
     isPrivate: data.isPrivate,
     capacity: data.capacity,
+    priceCentsOverride: dollarsToCents(data.priceDollars),
     status: "open",
     createdBy: adminId,
   });
@@ -57,6 +64,7 @@ export async function updateSlotAction(slotId: string, formData: FormData) {
     location: formData.get("location"),
     isPrivate: formData.get("isPrivate") ?? "",
     capacity: formData.get("capacity") ?? 1,
+    priceDollars: formData.get("priceDollars") ?? "",
   });
 
   if (!parsed.success) {
@@ -76,6 +84,7 @@ export async function updateSlotAction(slotId: string, formData: FormData) {
       location: data.location,
       isPrivate: data.isPrivate,
       capacity: data.capacity,
+      priceCentsOverride: dollarsToCents(data.priceDollars),
     })
     .where(eq(schema.slots.id, slotId));
 

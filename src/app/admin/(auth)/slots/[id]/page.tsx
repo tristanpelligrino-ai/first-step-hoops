@@ -12,6 +12,7 @@ import {
   reopenSlotAction,
 } from "@/lib/actions/slots";
 import { SubmitButton } from "@/components/admin/form/SubmitButton";
+import { ShareLinkBox } from "@/components/admin/ShareLinkBox";
 
 export const metadata: Metadata = {
   title: "Edit Slot — First Step Hoops Admin",
@@ -74,6 +75,10 @@ export default async function EditSlotPage({ params, searchParams }: Props) {
             location: slot.location,
             isPrivate: slot.isPrivate,
             capacity: slot.capacity,
+            priceDollars:
+              slot.priceCentsOverride != null
+                ? slot.priceCentsOverride / 100
+                : undefined,
           }}
         />
 
@@ -86,6 +91,31 @@ export default async function EditSlotPage({ params, searchParams }: Props) {
             <div className="mono-eyebrow text-white/50 mb-1">Bookings</div>
             <div className="text-white text-[15px]">{bookingCount}</div>
           </div>
+
+          {slot.capacity > 1 ? (
+            <div>
+              <div className="mono-eyebrow text-white/50 mb-1">Seats filled</div>
+              <div className="text-white text-[15px]">
+                {slot.seatsTaken} / {slot.capacity}
+              </div>
+            </div>
+          ) : null}
+
+          {slot.isPrivate ? (
+            <div>
+              <div className="mono-eyebrow text-white/50 mb-2">
+                Share booking link
+              </div>
+              <ShareLinkBox
+                url={`${process.env.NEXT_PUBLIC_APP_URL ?? ""}/book/details?slot=${slot.id}`}
+              />
+              <p className="text-[12px] text-white/50 mt-2 leading-[1.5]">
+                Send this to each parent. They book a seat, sign the waiver, and
+                pay the per-player price you set — up to {slot.capacity}{" "}
+                {slot.capacity === 1 ? "player" : "players"}.
+              </p>
+            </div>
+          ) : null}
 
           <hr className="border-white/10 my-2" />
 

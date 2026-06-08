@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import type Stripe from "stripe";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
 import {
@@ -166,8 +166,27 @@ async function releaseAbandonedBooking(bookingId: string, slotId: string) {
   if (!latest || latest.paymentIntentId) return;
 
   await db.delete(schema.bookings).where(eq(schema.bookings.id, bookingId));
-  await db
-    .update(schema.slots)
-    .set({ status: "open" })
-    .where(eq(schema.slots.id, slotId));
+
+  // Free the seat. Group slots (capacity > 1) never flipped to 'booked' — they
+  // track occupancy with the seat counter — so we decrement it. Standard
+  // single slots reopen by flipping status back to 'open'.
+  const [slot] = await db
+    .select({ capacity: schema.slots.capacity })
+    .from(schema.slots)
+    .where(eq(schema.slots.id, slotId))
+    .limit(1);
+
+  if (!slot) return;
+
+  if (slot.capacity > 1) {
+    await db
+      .update(schema.slots)
+      .set({ seatsTaken: sql`GREATEST(${schema.slots.seatsTaken} - 1, 0)` })
+      .where(eq(schema.slots.id, slotId));
+  } else {
+    await db
+      .update(schema.slots)
+      .set({ status: "open" })
+      .where(eq(schema.slots.id, slotId));
+  }
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { db, schema } from "@/lib/db";
@@ -49,9 +49,19 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
     redirect("/book/slots?error=not-found");
   }
 
-  if (slot.isPrivate || slot.status !== "open" || slot.startsAt < new Date()) {
+  // Private slots are reachable only via their direct share link (group /
+  // clinic sessions), so we allow them here — the slot id is the access token.
+  if (slot.status !== "open" || slot.startsAt < new Date()) {
     redirect("/book/slots?error=unavailable");
   }
+
+  if (slot.seatsTaken >= slot.capacity) {
+    redirect("/book/slots?error=taken");
+  }
+
+  // A multi-seat slot is a group session: several players book the same slot
+  // and each pays the (typically discounted) per-seat price.
+  const isGroup = slot.capacity > 1;
 
   // A published waiver must exist to bind the parent's signature to.
   const [currentWaiver] = await db
@@ -67,12 +77,28 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
     );
   }
 
-  // Atomic claim: only succeeds if slot is still 'open' at the moment we run
-  const claimed = await db
-    .update(schema.slots)
-    .set({ status: "booked" })
-    .where(and(eq(schema.slots.id, data.slotId), eq(schema.slots.status, "open")))
-    .returning({ id: schema.slots.id });
+  // Atomic claim. Group slots increment the seat counter (and only succeed
+  // while a seat is free), leaving status 'open' so other players can still
+  // book. Standard single slots flip 'open' -> 'booked' as before.
+  const claimed = isGroup
+    ? await db
+        .update(schema.slots)
+        .set({ seatsTaken: sql`${schema.slots.seatsTaken} + 1` })
+        .where(
+          and(
+            eq(schema.slots.id, data.slotId),
+            eq(schema.slots.status, "open"),
+            sql`${schema.slots.seatsTaken} < ${schema.slots.capacity}`,
+          ),
+        )
+        .returning({ id: schema.slots.id })
+    : await db
+        .update(schema.slots)
+        .set({ status: "booked" })
+        .where(
+          and(eq(schema.slots.id, data.slotId), eq(schema.slots.status, "open")),
+        )
+        .returning({ id: schema.slots.id });
 
   if (claimed.length === 0) {
     redirect("/book/slots?error=taken");
@@ -138,6 +164,10 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
     })
     .returning({ id: schema.signedWaivers.id });
 
+  // Per-seat price: the slot's override (discounted group price) or the
+  // standard single-session price.
+  const unitAmount = slot.priceCentsOverride ?? PRICES.single;
+
   // Create pending booking — payment_intent stays null until webhook confirms
   const [booking] = await db
     .insert(schema.bookings)
@@ -149,6 +179,7 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
       paidWith: "single_purchase",
       stripePaymentIntentId: null,
       signedWaiverId: signedWaiver.id,
+      customPriceCents: slot.priceCentsOverride ?? null,
     })
     .returning({ id: schema.bookings.id });
 
@@ -165,9 +196,11 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
       {
         price_data: {
           currency: "usd",
-          unit_amount: PRICES.single,
+          unit_amount: unitAmount,
           product_data: {
-            name: "First Step Hoops — Single Session",
+            name: isGroup
+              ? "First Step Hoops — Group Session"
+              : "First Step Hoops — Single Session",
             description: `${formatDateLong(slot.startsAt)} at ${formatTimeShort(slot.startsAt)} · ${slot.location}`,
           },
         },
@@ -176,12 +209,12 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
     ],
     metadata: {
       bookingId: booking.id,
-      plan: "single",
+      plan: isGroup ? "group" : "single",
     },
     payment_intent_data: {
       metadata: {
         bookingId: booking.id,
-        plan: "single",
+        plan: isGroup ? "group" : "single",
       },
     },
     expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
