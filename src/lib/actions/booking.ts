@@ -191,6 +191,9 @@ export async function startSingleSessionCheckoutAction(formData: FormData) {
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
+    // Promo codes apply to the standard $25 single session only — group seats
+    // already carry a discounted per-seat price via priceCentsOverride.
+    allow_promotion_codes: isGroup ? undefined : true,
     customer_email: data.parentEmail,
     line_items: [
       {
